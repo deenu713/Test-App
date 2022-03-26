@@ -3,3 +3,30 @@ $aapt2link = saker.android.aapt2.link(
 	$aapt2c,
 	Manifest: AndroidManifest.xml
 )
+$javac = saker.java.compile(
+	SourceDirectories: [ src ] + $aapt2[JavaSourceDirectories],
+	BootClassPath: saker.android.classpath.platform(),
+	SDKs: {
+		AndroidPlatform: saker.android.sdk.platform(),
+		AndroidBuildTools: saker.android.sdk.buildtools(),
+	}
+)
+$d8 = saker.android.d8($javac)
+saker.apk.create(
+	Resources: $aapt2link
+	Classes: $d8
+	Assets: assets/
+)
+foreach $assetdir in [assets-en, assets-de] {
+	saker.apk.create(
+		Assets: [
+			assets
+			$assetdir
+		]
+		Output: "apk-{ $assetdir }.apk"
+		# ...
+	)
+}
+$signed = saker.apk.sign($apk)
+$aligned = saker.android.zipalign($apk)
+$signed = saker.apk.sign($aligned)
