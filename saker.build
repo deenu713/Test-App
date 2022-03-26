@@ -1,3 +1,5 @@
+saker.android.sdk.buildtools()
+saker.android.sdk.platform()
 $aapt2c = saker.android.aapt2.compile(res)
 $aapt2link = saker.android.aapt2.link(
 	$aapt2c,
